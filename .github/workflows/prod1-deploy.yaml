@@ -1,0 +1,55 @@
+
+name: PROD-v1-Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - prod_version_1
+    paths-ignore:
+      - ".github/workflows/**"
+
+jobs:
+  build:
+    runs-on: ubuntu-22.04
+    env:
+      name: ${GITHUB_REPOSITORY#*/}-stage
+      ssh-key: ${{ secrets.DEV_SSH_KEY }}
+      tag: latest #or ${{ github.sha }}
+      host: ${{ vars.DEV_NAME }}@${{ vars.DEV_IP }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Generate .env
+        run: |
+          echo "NODE_ENV=${{ vars.STAGE_NODE_ENV }}" >> .env.local
+          echo "NEXT_PUBLIC_HOST_TYPE=${{ vars.STAGE_NEXT_PUBLIC_HOST_TYPE }}" >> .env.local
+          echo "NEXT_PUBLIC_INFURA_KEY=${{ vars.STAGE_NEXT_PUBLIC_INFURA_KEY }}" >> .env.local
+          echo "NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID=${{ vars.STAGE_NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID }}" >> .env.local
+          echo "NEXT_PUBLIC_TEST_MODE=${{ vars.STAGE_NEXT_PUBLIC_TEST_MODE }}" >> .env.local
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGE_NEXT_PUBLIC_BASE_PATH }}" >> .env.local
+          echo "NEXT_TEST_ANKR=${{ vars.STAGE_NEXT_TEST_ANKR }}" >> .env.local
+          echo "NEXT_PUBLIC_API_IPFS_URL=${{ vars.STAGE_NEXT_PUBLIC_API_IPFS_URL }}" >> .env.local        
+
+      - name: Build docker image
+        run: |
+          docker build . -t ${{ env.name }}:${{ env.tag }}
+
+      - name: Save docker image
+        run: |
+          docker save -o ${{ env.name }}.tar ${{ env.name }}:${{ env.tag }}
+
+      - name: Copy image to EC2
+        run: |
+          echo "${{ env.ssh-key }}" > ssh-key.pem
+          sudo chmod 400 ssh-key.pem
+          scp -i ssh-key.pem -o StrictHostKeyChecking=no ${{ env.name }}.tar ${{ env.host }}:${{ env.name }}.tar
+
+      - name: Start image
+        run: |
+          ssh -i ssh-key.pem -o StrictHostKeyChecking=no ${{ env.host }} ' \
+          sudo docker load -i '${{ env.name }}'.tar && \
+          sudo docker compose -f dapp-stage/compose.yaml up -d && \
+          sudo docker image prune -af'

@@ -1,0 +1,1 @@
+export { BorrowDetailsPage } from './ui';

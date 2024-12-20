@@ -1,0 +1,1 @@
+export { LendDetailsPage } from './ui';
