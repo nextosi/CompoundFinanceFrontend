@@ -1,27 +1,5 @@
-# Dapp
+# CompoundDapp
 
-## Getting Started
+Special thanks to WOOF who designed and built this frontend and to all of our team members and the compound community!
 
-First, run the development server:
-
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
-
-### Environment Variables
-
-| Environment Variable                    | Type   | Default Value | Description |
-|-----------------------------------------| ------ | ------------- | ----------- |
-| `NEXT_PUBLIC_HOST_TYPE`                 | String | -             | Required    |
-| `NEXT_PUBLIC_INFURA_KEY`                | String | -             | Required    |
-| `NEXT_PUBLIC_WALLET_CONNECT_PROJECT_ID` | String | -             | Required    |
-| `NEXT_PUBLIC_API_IPFS_URL`              | String | -             | Required    |
-# checkd
+The expected hash for this verision is f85845897887b5101aefb1aae1cb88e5bd2331a80ffa9a2b4ec41ff372c4d72fn when using the compound deployer.
