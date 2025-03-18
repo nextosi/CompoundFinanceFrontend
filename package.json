@@ -10,6 +10,7 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
+    "export": "next build && next export",
     "prettier": "npx prettier --write **/*.{ts,js,tsx,json}",
     "lint:ts": "eslint \"./src/**/*.{ts,tsx}\"",
     "lint:ts:fix": "eslint \"./src/**/*.{ts,tsx}\" --fix",

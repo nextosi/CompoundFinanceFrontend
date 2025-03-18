@@ -1,6 +1,6 @@
 /** @type {import("next").NextConfig} */
 const nextConfig = {
-  output: 'standalone',
+  output: 'export',
 
   reactStrictMode: false,
 
@@ -23,29 +23,6 @@ const nextConfig = {
     });
 
     return config;
-  },
-
-  async rewrites() {
-    return [
-      {
-        source: '/ipfs/:path*',
-        destination: '/api/proxy?path=:path*',
-      },
-    ];
-  },
-
-  async headers() {
-    return [
-      {
-        source: '/:all*(svg|png|jpg|jpeg|woff2|ttf|eot|svg)',
-        headers: [
-          {
-            key: 'Cache-Control',
-            value: 'public, max-age=31536000, immutable',
-          },
-        ],
-      },
-    ];
   },
 };
 
